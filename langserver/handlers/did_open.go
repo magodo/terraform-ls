@@ -62,6 +62,16 @@ func (lh *logHandler) TextDocumentDidOpen(ctx context.Context, params lsp.DidOpe
 			Message: msg,
 		})
 	}
+
+	for _, c := range candidates {
+		if !c.IsDecoderReady() {
+			_, err := c.DecodeFiles()
+			if err != nil {
+				return fmt.Errorf("failed to decode files: %w", err)
+			}
+		}
+	}
+
 	if len(candidates) > 1 {
 		candidateDir := humanReadablePath(rootDir, candidates[0].Path())
 
